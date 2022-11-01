@@ -30,14 +30,15 @@ find_package(Qt6 REQUIRED COMPONENTS Charts Core Gui)
 
 set(TS_FILES Budgetizer_dev_en_US.ts)
 add_subdirectory(sqlite3)
+
 set(PROJECT_SOURCES
-        main.cpp
-        mainwindow.cpp mainwindow.h mainwindow.ui
-        newcategoryform.h newcategoryform.cpp newcategoryform.ui
-        databasemanager.h databasemanager.cpp
-        transactiontable.h transactiontable.cpp
-        analyticsmanager.h analyticsmanager.cpp
-        utils.h
+        src/main.cpp
+        src/mainwindow.cpp src/mainwindow.h src/mainwindow.ui
+        src/newcategoryform.h src/newcategoryform.cpp src/newcategoryform.ui
+        src/databasemanager.h src/databasemanager.cpp
+        src/transactiontable.h src/transactiontable.cpp
+        src/analyticsmanager.h src/analyticsmanager.cpp
+        src/utils.h
         ${TS_FILES}
 )
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -71,6 +72,7 @@ target_link_libraries(Budgetizer_dev PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
 
 set_target_properties(Budgetizer_dev PROPERTIES
     WIN32_EXECUTABLE TRUE
+    WIN64_EXECUTABLE TRUE
     MACOSX_BUNDLE TRUE
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
