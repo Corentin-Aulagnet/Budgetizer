@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(Budgetizer_dev VERSION 0.1 LANGUAGES CXX)
+project(Budgetizer VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -28,7 +28,7 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Charts Core Gui)
 
-set(TS_FILES Budgetizer_dev_en_US.ts)
+set(TS_FILES Budgetizer_en_US.ts)
 add_subdirectory(sqlite3)
 
 set(PROJECT_SOURCES
@@ -42,7 +42,7 @@ set(PROJECT_SOURCES
         ${TS_FILES}
 )
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(Budgetizer_dev
+    qt_add_executable(Budgetizer
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
@@ -50,12 +50,12 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 else()
     if(ANDROID)
-        add_library(Budgetizer_dev SHARED
+        add_library(Budgetizer SHARED
             ${PROJECT_SOURCES}
             sqlite3
         )
     else()
-        add_executable(Budgetizer_dev
+        add_executable(Budgetizer
             ${PROJECT_SOURCES}
         )
     endif()
@@ -63,14 +63,14 @@ else()
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
 
-target_link_libraries(Budgetizer_dev PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
+target_link_libraries(Budgetizer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
                                              sqlite3
                                      PUBLIC
                                              Qt::Charts
                                              Qt::Core
                                              Qt::Gui)
 
-set_target_properties(Budgetizer_dev PROPERTIES
+set_target_properties(Budgetizer PROPERTIES
     WIN32_EXECUTABLE TRUE
     WIN64_EXECUTABLE TRUE
     MACOSX_BUNDLE TRUE
@@ -80,5 +80,5 @@ set_target_properties(Budgetizer_dev PROPERTIES
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(Budgetizer_dev)
+    qt_finalize_executable(Budgetizer)
 endif()
