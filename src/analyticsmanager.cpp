@@ -7,6 +7,7 @@
 #include<QBarCategoryAxis>
 #include <QStackedBarSeries>
 #include <QValueAxis>
+#include <iostream>
 AnalyticsManager::AnalyticsManager(Ui::MainWindow *_ui,DataBaseManager *_dataManager):
     ui(_ui),
     dataManager(_dataManager)
@@ -174,6 +175,7 @@ QStringList AnalyticsManager::gatherDataForMonthsListView(){
     char sql[] = "SELECT DISTINCT DATE FROM ACCOUNT";
     dataManager->ExecuteTransaction(sql);
     QStringList output;
+    std::set<QString> outputSet;
     DataTypes::DataTable dataTable = dataManager->GetSelectedRows();
     std::map<int,QString> int2Month{{1, QString::fromStdString("January")},
                                     {2, QString::fromStdString("February")},
@@ -192,7 +194,10 @@ QStringList AnalyticsManager::gatherDataForMonthsListView(){
         QString str;
         str += int2Month[date.month()];
         str += " "+date.toString("yyyy");
-        output.append(str);
+        outputSet.insert(str);
+    }
+    for(std::set<QString>::iterator it = outputSet.begin();it != outputSet.end();it++){
+        output.append(*it);
     }
     return output;
 }
@@ -202,9 +207,7 @@ QList<QBarSet*> AnalyticsManager::gatherDataForMonthlyBarCharts(QStringList mont
     QList<QBarSet*> setList;
     std::set<QString> categories;
     QList<std::map<QString, float>> categoryValuesListByMonth;
-    for(QString mmyyyy : monthsList){
-        //Gather and process data for each months/year in monthsList
-        std::map<QString,std::string> month2Int{{QString::fromStdString("January"), "01"},
+    std::map<QString,std::string> month2Int{{QString::fromStdString("January"), "01"},
                                         {QString::fromStdString("February"), "02"},
                                         {QString::fromStdString("March"), "03"},
                                         {QString::fromStdString("April"), "04"},
@@ -216,6 +219,8 @@ QList<QBarSet*> AnalyticsManager::gatherDataForMonthlyBarCharts(QStringList mont
                                         {QString::fromStdString("October"), "10"},
                                         {QString::fromStdString("November"), "11"},
                                         {QString::fromStdString("December"), "12"}};
+    for(QString mmyyyy : monthsList){
+        //Gather and process data for each months/year in monthsList
         std::string month = month2Int[mmyyyy.split(" ")[0]];
         std::string year=mmyyyy.split(" ")[1].toStdString();
         //Gather date from database
@@ -226,7 +231,6 @@ QList<QBarSet*> AnalyticsManager::gatherDataForMonthlyBarCharts(QStringList mont
         }
         dataManager->ExecuteSelectTransaction();
         //Create set, process data to get values by categories
-
         DataTypes::DataTable rows = DataBaseManager::GetSelectedRows();
         std::map<QString, float> categoryValues = getMontlhyCategoryValueFromExtrac(rows,QDate(stoi(year),stoi(month),1));
         //Appends the set of categories to display
@@ -237,10 +241,10 @@ QList<QBarSet*> AnalyticsManager::gatherDataForMonthlyBarCharts(QStringList mont
     }
     float tmp=0;
     for(std::set<QString>::iterator it = categories.begin(); it != categories.end();it++){
-        tmp = 0;
         set = new QBarSet(*it); //set name is the category name, values ordered by months in monthsList
         for(int i =0; i<categoryValuesListByMonth.size();i++){
             *set << categoryValuesListByMonth[i][*it];
+            std::cout<< categoryValuesListByMonth[i][*it];
             tmp+= categoryValuesListByMonth[i][*it];
         }
         if(tmp > max) max = tmp;
