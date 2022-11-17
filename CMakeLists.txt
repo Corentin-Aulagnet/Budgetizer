@@ -29,7 +29,8 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets LinguistTools REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Charts Core Gui)
 
 set(TS_FILES Budgetizer_en_US.ts)
-add_subdirectory(sqlite3)
+set(APP_NAME Budgetizer)
+#add_subdirectory(sqlite3)
 
 set(PROJECT_SOURCES
         src/main.cpp
@@ -42,7 +43,7 @@ set(PROJECT_SOURCES
         ${TS_FILES}
 )
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(Budgetizer
+    qt_add_executable(${APP_NAME}
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
@@ -50,27 +51,33 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 else()
     if(ANDROID)
-        add_library(Budgetizer SHARED
+        add_library(${APP_NAME} SHARED
             ${PROJECT_SOURCES}
             sqlite3
         )
     else()
-        add_executable(Budgetizer
+        add_executable(${APP_NAME}
             ${PROJECT_SOURCES}
         )
     endif()
 
     qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 endif()
+include_directories(dependencies/sqlite3/include)
+add_library(sqlite3 STATIC IMPORTED)
+set_property(TARGET sqlite3 PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/dependencies/sqlite3/lib/sqlite3.a)
 
-target_link_libraries(Budgetizer PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
-                                             sqlite3
+target_link_libraries(${APP_NAME}
+                                    PRIVATE Qt${QT_VERSION_MAJOR}::Widgets 
+                                    sqlite3 
+                                    ${CMAKE_DL_LIBS}
+                                            
                                      PUBLIC
                                              Qt::Charts
                                              Qt::Core
                                              Qt::Gui)
 
-set_target_properties(Budgetizer PROPERTIES
+set_target_properties(${APP_NAME} PROPERTIES
     WIN32_EXECUTABLE TRUE
     WIN64_EXECUTABLE TRUE
     MACOSX_BUNDLE TRUE
@@ -80,5 +87,5 @@ set_target_properties(Budgetizer PROPERTIES
 )
 
 if(QT_VERSION_MAJOR EQUAL 6)
-    qt_finalize_executable(Budgetizer)
+    qt_finalize_executable(${APP_NAME})
 endif()

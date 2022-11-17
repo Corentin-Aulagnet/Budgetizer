@@ -1,13 +1,13 @@
 #ifndef DATABASEMANAGER_H
 #define DATABASEMANAGER_H
 
-#include "qcoreapplication.h"
+#include <qcoreapplication.h>
 #include <string>
 #include <list>
 #include <QString>
 #include <QStringList>
 #include <QPointF>
-#include <sqlite3/sqlite3.h>
+#include <sqlite3.h>
 #include <QDate>
 /*!
  *  \brief DataTypes, custom types to store processed or to be processed data
