@@ -65,7 +65,14 @@ else()
 endif()
 include_directories(dependencies/sqlite3/include)
 add_library(sqlite3 STATIC IMPORTED)
-set_property(TARGET sqlite3 PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/dependencies/sqlite3/lib/sqlite3.a)
+if(WIN32)
+    #Building on Windows
+    set_property(TARGET sqlite3 PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/dependencies/sqlite3/lib/sqlite3.lib)
+else()
+    if(UNIX)
+        set_property(TARGET sqlite3 PROPERTY IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/dependencies/sqlite3/lib/sqlite3.a)
+    endif()
+endif()
 
 target_link_libraries(${APP_NAME}
                                     PRIVATE Qt${QT_VERSION_MAJOR}::Widgets 
